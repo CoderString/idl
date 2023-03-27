@@ -1,4 +1,4 @@
-module  github.com/coderstring/idl
+module github.com/coderstring/idl
 
 go 1.18
 
