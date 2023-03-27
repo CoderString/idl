@@ -1,4 +1,4 @@
-module idl
+module example.com/cmp/idl
 
 go 1.17
 
