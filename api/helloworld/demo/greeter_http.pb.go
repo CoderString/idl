@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.6.1
 // - protoc             v3.21.9
-// source: greeter.proto
+// source: helloworld/demo/greeter.proto
 
 package demo
 
@@ -19,16 +19,21 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationGreeterDownload = "/helloworld.demo.Greeter/Download"
 const OperationGreeterSayHello = "/helloworld.demo.Greeter/SayHello"
+const OperationGreeterUpload = "/helloworld.demo.Greeter/Upload"
 
 type GreeterHTTPServer interface {
-	// SayHello Sends a greeting
+	Download(context.Context, *CsvRequest) (*CsvResponse, error)
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	Upload(context.Context, *CsvRequest) (*CsvResponse, error)
 }
 
 func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
 	r := s.Route("/")
 	r.GET("/helloworld/{name}", _Greeter_SayHello0_HTTP_Handler(srv))
+	r.POST("/helloworld/upload", _Greeter_Upload0_HTTP_Handler(srv))
+	r.POST("/helloworld/download", _Greeter_Download0_HTTP_Handler(srv))
 }
 
 func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
@@ -53,8 +58,48 @@ func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Greeter_Upload0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CsvRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterUpload)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Upload(ctx, req.(*CsvRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*CsvResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Greeter_Download0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CsvRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterDownload)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Download(ctx, req.(*CsvRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*CsvResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type GreeterHTTPClient interface {
+	Download(ctx context.Context, req *CsvRequest, opts ...http.CallOption) (rsp *CsvResponse, err error)
 	SayHello(ctx context.Context, req *HelloRequest, opts ...http.CallOption) (rsp *HelloReply, err error)
+	Upload(ctx context.Context, req *CsvRequest, opts ...http.CallOption) (rsp *CsvResponse, err error)
 }
 
 type GreeterHTTPClientImpl struct {
@@ -65,6 +110,19 @@ func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
 	return &GreeterHTTPClientImpl{client}
 }
 
+func (c *GreeterHTTPClientImpl) Download(ctx context.Context, in *CsvRequest, opts ...http.CallOption) (*CsvResponse, error) {
+	var out CsvResponse
+	pattern := "/helloworld/download"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGreeterDownload))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, opts ...http.CallOption) (*HelloReply, error) {
 	var out HelloReply
 	pattern := "/helloworld/{name}"
@@ -72,6 +130,19 @@ func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, 
 	opts = append(opts, http.Operation(OperationGreeterSayHello))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *GreeterHTTPClientImpl) Upload(ctx context.Context, in *CsvRequest, opts ...http.CallOption) (*CsvResponse, error) {
+	var out CsvResponse
+	pattern := "/helloworld/upload"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGreeterUpload))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

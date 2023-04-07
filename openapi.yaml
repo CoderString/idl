@@ -4,14 +4,48 @@
 openapi: 3.0.3
 info:
     title: Greeter API
-    description: The greeting service definition.
     version: 0.0.1
 paths:
+    /helloworld/download:
+        post:
+            tags:
+                - Greeter
+            operationId: Greeter_Download
+            parameters:
+                - name: data
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.demo.CsvResponse'
+    /helloworld/upload:
+        post:
+            tags:
+                - Greeter
+            operationId: Greeter_Upload
+            parameters:
+                - name: data
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.demo.CsvResponse'
     /helloworld/{name}:
         get:
             tags:
                 - Greeter
-            description: Sends a greeting
             operationId: Greeter_SayHello
             parameters:
                 - name: name
@@ -25,14 +59,19 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/helloworld.demo.HelloReply'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        helloworld.demo.CsvResponse:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+        helloworld.demo.HelloReply:
             type: object
             properties:
                 message:
                     type: string
-            description: The response message containing the greetings
 tags:
     - name: Greeter
