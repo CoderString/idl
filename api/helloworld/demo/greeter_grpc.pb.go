@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.21.9
-// source: helloworld/demo/greeter.proto
+// source: greeter.proto
 
 package demo
 
@@ -30,7 +30,7 @@ const (
 type GreeterClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	Upload(ctx context.Context, in *CsvRequest, opts ...grpc.CallOption) (*CsvResponse, error)
-	Download(ctx context.Context, in *CsvRequest, opts ...grpc.CallOption) (*CsvResponse, error)
+	Download(ctx context.Context, in *DownloadCsvRequest, opts ...grpc.CallOption) (*DownloadCsvResponse, error)
 }
 
 type greeterClient struct {
@@ -59,8 +59,8 @@ func (c *greeterClient) Upload(ctx context.Context, in *CsvRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *greeterClient) Download(ctx context.Context, in *CsvRequest, opts ...grpc.CallOption) (*CsvResponse, error) {
-	out := new(CsvResponse)
+func (c *greeterClient) Download(ctx context.Context, in *DownloadCsvRequest, opts ...grpc.CallOption) (*DownloadCsvResponse, error) {
+	out := new(DownloadCsvResponse)
 	err := c.cc.Invoke(ctx, Greeter_Download_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (c *greeterClient) Download(ctx context.Context, in *CsvRequest, opts ...gr
 type GreeterServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	Upload(context.Context, *CsvRequest) (*CsvResponse, error)
-	Download(context.Context, *CsvRequest) (*CsvResponse, error)
+	Download(context.Context, *DownloadCsvRequest) (*DownloadCsvResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -88,7 +88,7 @@ func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*Hel
 func (UnimplementedGreeterServer) Upload(context.Context, *CsvRequest) (*CsvResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
-func (UnimplementedGreeterServer) Download(context.Context, *CsvRequest) (*CsvResponse, error) {
+func (UnimplementedGreeterServer) Download(context.Context, *DownloadCsvRequest) (*DownloadCsvResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Download not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
@@ -141,7 +141,7 @@ func _Greeter_Upload_Handler(srv interface{}, ctx context.Context, dec func(inte
 }
 
 func _Greeter_Download_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CsvRequest)
+	in := new(DownloadCsvRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func _Greeter_Download_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Greeter_Download_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).Download(ctx, req.(*CsvRequest))
+		return srv.(GreeterServer).Download(ctx, req.(*DownloadCsvRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -179,5 +179,5 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "helloworld/demo/greeter.proto",
+	Metadata: "greeter.proto",
 }

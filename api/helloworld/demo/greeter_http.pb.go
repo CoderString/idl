@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.6.1
 // - protoc             v3.21.9
-// source: helloworld/demo/greeter.proto
+// source: greeter.proto
 
 package demo
 
@@ -24,7 +24,7 @@ const OperationGreeterSayHello = "/helloworld.demo.Greeter/SayHello"
 const OperationGreeterUpload = "/helloworld.demo.Greeter/Upload"
 
 type GreeterHTTPServer interface {
-	Download(context.Context, *CsvRequest) (*CsvResponse, error)
+	Download(context.Context, *DownloadCsvRequest) (*DownloadCsvResponse, error)
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	Upload(context.Context, *CsvRequest) (*CsvResponse, error)
 }
@@ -79,25 +79,25 @@ func _Greeter_Upload0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context)
 
 func _Greeter_Download0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CsvRequest
+		var in DownloadCsvRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationGreeterDownload)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Download(ctx, req.(*CsvRequest))
+			return srv.Download(ctx, req.(*DownloadCsvRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*CsvResponse)
+		reply := out.(*DownloadCsvResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
 type GreeterHTTPClient interface {
-	Download(ctx context.Context, req *CsvRequest, opts ...http.CallOption) (rsp *CsvResponse, err error)
+	Download(ctx context.Context, req *DownloadCsvRequest, opts ...http.CallOption) (rsp *DownloadCsvResponse, err error)
 	SayHello(ctx context.Context, req *HelloRequest, opts ...http.CallOption) (rsp *HelloReply, err error)
 	Upload(ctx context.Context, req *CsvRequest, opts ...http.CallOption) (rsp *CsvResponse, err error)
 }
@@ -110,8 +110,8 @@ func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
 	return &GreeterHTTPClientImpl{client}
 }
 
-func (c *GreeterHTTPClientImpl) Download(ctx context.Context, in *CsvRequest, opts ...http.CallOption) (*CsvResponse, error) {
-	var out CsvResponse
+func (c *GreeterHTTPClientImpl) Download(ctx context.Context, in *DownloadCsvRequest, opts ...http.CallOption) (*DownloadCsvResponse, error) {
+	var out DownloadCsvResponse
 	pattern := "/helloworld/download"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGreeterDownload))
