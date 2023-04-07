@@ -33,7 +33,7 @@ func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
 	r := s.Route("/")
 	r.GET("/helloworld/{name}", _Greeter_SayHello0_HTTP_Handler(srv))
 	r.POST("/helloworld/upload", _Greeter_Upload0_HTTP_Handler(srv))
-	r.POST("/helloworld/download", _Greeter_Download0_HTTP_Handler(srv))
+	r.GET("/helloworld/download", _Greeter_Download0_HTTP_Handler(srv))
 }
 
 func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
@@ -116,7 +116,7 @@ func (c *GreeterHTTPClientImpl) Download(ctx context.Context, in *DownloadCsvReq
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGreeterDownload))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

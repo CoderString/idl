@@ -22,7 +22,7 @@ service Greeter {
 
   rpc Download (DownloadCsvRequest) returns (DownloadCsvResponse) {
     option (google.api.http) = {
-      post: "/helloworld/download"
+      get: "/helloworld/download"
     };
   }
 }
