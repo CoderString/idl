@@ -77,13 +77,10 @@ components:
         CsvResponse:
             type: object
             properties:
-                header:
-                    type: object
-                    additionalProperties:
+                records:
+                    type: array
+                    items:
                         type: string
-                data:
-                    type: string
-                    format: bytes
         DownloadCsvResponse:
             type: object
             properties:

@@ -41,8 +41,7 @@ message CsvRequest {
 }
 
 message CsvResponse {
-  map<string, string> header = 1;
-  bytes data = 2;
+  repeated string records = 1;
 }
 
 message DownloadCsvRequest {
