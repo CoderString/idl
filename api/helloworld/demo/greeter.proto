@@ -46,7 +46,6 @@ message CsvResponse {
 }
 
 message DownloadCsvRequest {
-  bytes data = 1;
 }
 
 message DownloadCsvResponse {

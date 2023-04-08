@@ -11,12 +11,6 @@ paths:
             tags:
                 - Greeter
             operationId: Greeter_Download
-            parameters:
-                - name: data
-                  in: query
-                  schema:
-                    type: string
-                    format: bytes
             responses:
                 "200":
                     description: OK
