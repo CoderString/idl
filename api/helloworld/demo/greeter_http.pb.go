@@ -32,8 +32,8 @@ type GreeterHTTPServer interface {
 func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
 	r := s.Route("/")
 	r.GET("/helloworld/{name}", _Greeter_SayHello0_HTTP_Handler(srv))
-	r.POST("/helloworld/upload", _Greeter_Upload0_HTTP_Handler(srv))
-	r.GET("/helloworld/download", _Greeter_Download0_HTTP_Handler(srv))
+	r.POST("/helloworld/v1/upload", _Greeter_Upload0_HTTP_Handler(srv))
+	r.GET("/helloworld/v1/download", _Greeter_Download0_HTTP_Handler(srv))
 }
 
 func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
@@ -112,7 +112,7 @@ func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
 
 func (c *GreeterHTTPClientImpl) Download(ctx context.Context, in *DownloadCsvRequest, opts ...http.CallOption) (*DownloadCsvResponse, error) {
 	var out DownloadCsvResponse
-	pattern := "/helloworld/download"
+	pattern := "/helloworld/v1/download"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGreeterDownload))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -138,7 +138,7 @@ func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, 
 
 func (c *GreeterHTTPClientImpl) Upload(ctx context.Context, in *CsvRequest, opts ...http.CallOption) (*CsvResponse, error) {
 	var out CsvResponse
-	pattern := "/helloworld/upload"
+	pattern := "/helloworld/v1/upload"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGreeterUpload))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -6,7 +6,7 @@ info:
     title: Greeter API
     version: 0.0.1
 paths:
-    /helloworld/download:
+    /helloworld/v1/download:
         get:
             tags:
                 - Greeter
@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /helloworld/upload:
+    /helloworld/v1/upload:
         post:
             tags:
                 - Greeter

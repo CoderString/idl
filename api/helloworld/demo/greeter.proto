@@ -16,13 +16,13 @@ service Greeter {
 
   rpc Upload (CsvRequest) returns (CsvResponse) {
     option (google.api.http) = {
-      post: "/helloworld/upload"
+      post: "/helloworld/v1/upload"
     };
   }
 
   rpc Download (DownloadCsvRequest) returns (DownloadCsvResponse) {
     option (google.api.http) = {
-      get: "/helloworld/download"
+      get: "/helloworld/v1/download"
     };
   }
 }
